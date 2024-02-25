@@ -1,11 +1,13 @@
-from .nodes import LatentMirror, LatentShift
+from .nodes import LatentMirror, LatentShift, KSamplerMirroring
 
 NODE_CLASS_MAPPINGS = {
     "LatentMirror": LatentMirror,
-    "LatentShift": LatentShift
+    "LatentShift": LatentShift,
+    "KSamplerMirroring": KSamplerMirroring,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "LatentMirror": "LatentMirror",
-    "LatentShift": "LatentShift"
+    "LatentShift": "LatentShift",
+    "KSamplerMirroring": "KSampler (Latent Control)"
 }
