@@ -11,9 +11,11 @@ This node can flip latent and merge original and flipped version
 
 **Fields:**
 - direction – `vertically`, `horizontally` or `both`
+- multiplier – multiply latent by specified number
 
 **Output:**
 - latent
 
 **Usage:**
-![sample](https://i.imgur.com/L6hH5LK.png)
+![sample](https://i.imgur.com/YMyYorQ.png)
+![sample](https://i.imgur.com/W5BasCO.png)
