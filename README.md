@@ -19,3 +19,19 @@ This node can flip latent and merge original and flipped version
 **Usage:**
 ![sample](https://i.imgur.com/YMyYorQ.png)
 ![sample](https://i.imgur.com/W5BasCO.png)
+
+### LatentShift
+This node can shift latent along x and y axes
+
+**Input:** 
+- latent
+
+**Fields:**
+- x_shift – float number from -1 to 1
+- y_shift – float number from -1 to 1
+
+**Output:**
+- latent
+
+**Usage:**
+![sample](https://i.imgur.com/1Dp5dSw.png)
