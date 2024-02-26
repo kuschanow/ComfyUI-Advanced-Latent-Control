@@ -16,7 +16,7 @@ This node can flip latent and merge original and flipped version
 **Output:**
 - `latent`
 
-**Usage:**
+**Usage:**  
 ![sample](https://i.imgur.com/YMyYorQ.png)
 ![sample](https://i.imgur.com/W5BasCO.png)
 
@@ -33,7 +33,7 @@ This node can shift latent along x and y axes
 **Output:**
 - `latent`
 
-**Usage:**
+**Usage:**  
 ![sample](https://i.imgur.com/1Dp5dSw.png)
 
 ### KSampler (Latent Control)
