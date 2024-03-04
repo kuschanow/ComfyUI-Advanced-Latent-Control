@@ -1,7 +1,6 @@
 import comfy.samplers
-import torch
-from .utils.sampler_callback import prepare_callback
-from .Transforms import MirrorTransform, ShiftTransform, MultiplyTransform
+from .utils.common_ksampler import common_ksampler
+from .Transforms import MirrorTransform, ShiftTransform, MultiplyTransform, TransformsCombine
 
 
 MIRROR_DIRECTIONS = ["none", "vertically", "horizontally", "both", "90 degree rotation", "180 degree rotation"]
@@ -68,10 +67,11 @@ class KSamplerMirroring:
                multiplier_mode="combine",
                multiplier=1):
 
-        transforms = (
-                MirrorTransform().process(start_mirror_at, stop_mirror_at, mirror_mode, mirror_direction) +
-                ShiftTransform().process(start_shift_at, stop_shift_at, shift_mode, x_shift, y_shift) +
-                MultiplyTransform().process(start_multiplier_at, stop_multiplier_at, multiplier_mode, multiplier)
+        transforms = TransformsCombine().combine(
+            TransformsCombine().combine(
+                MirrorTransform().process(start_mirror_at, stop_mirror_at, mirror_mode, mirror_direction),
+                ShiftTransform().process(start_shift_at, stop_shift_at, shift_mode, x_shift, y_shift)),
+            MultiplyTransform().process(start_multiplier_at, stop_multiplier_at, multiplier_mode, multiplier)
         )
 
         return common_ksampler(
@@ -84,28 +84,7 @@ class KSamplerMirroring:
             positive,
             negative,
             latent_image,
-            transforms=transforms,
+            transform=transforms,
             denoise=denoise)
-
-def common_ksampler(model, seed, steps, cfg, sampler_name, scheduler, positive, negative, latent, transforms, denoise=1.0, disable_noise=False, start_step=None, last_step=None, force_full_denoise=False):
-    latent_image = latent["samples"]
-    if disable_noise:
-        noise = torch.zeros(latent_image.size(), dtype=latent_image.dtype, layout=latent_image.layout, device="cpu")
-    else:
-        batch_inds = latent["batch_index"] if "batch_index" in latent else None
-        noise = comfy.sample.prepare_noise(latent_image, seed, batch_inds)
-
-    noise_mask = None
-    if "noise_mask" in latent:
-        noise_mask = latent["noise_mask"]
-
-    callback = prepare_callback(model, steps, mirroring_params)
-    disable_pbar = not comfy.utils.PROGRESS_BAR_ENABLED
-    samples = comfy.sample.sample(model, noise, steps, cfg, sampler_name, scheduler, positive, negative, latent_image,
-                                  denoise=denoise, disable_noise=disable_noise, start_step=start_step, last_step=last_step,
-                                  force_full_denoise=force_full_denoise, noise_mask=noise_mask, callback=callback, disable_pbar=disable_pbar, seed=seed)
-    out = latent.copy()
-    out["samples"] = samples
-    return (out, )
 
 

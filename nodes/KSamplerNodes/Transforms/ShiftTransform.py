@@ -25,16 +25,16 @@ class ShiftTransform:
                 mode="replace",
                 x_shift=0,
                 y_shift=0):
-        return [{
-            "params": {
-                "start_at": start_at,
-                "stop_at": stop_at,
-                "mode": mode,
-                "x_shift": x_shift,
-                "y_shift": y_shift,
-            },
-            "function": self.func
-        },]
+        return ([{
+                "params": {
+                    "start_at": start_at,
+                    "stop_at": stop_at,
+                    "mode": mode,
+                    "x_shift": x_shift,
+                    "y_shift": y_shift,
+                },
+                "function": self.func
+            }],)
 
     def func(self, step, x0, total_steps, params) -> list:
         x = x0

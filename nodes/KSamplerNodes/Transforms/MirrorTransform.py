@@ -1,7 +1,7 @@
 import torch
 
 
-DIRECTIONS = ["none", "vertically", "horizontally", "both", "90 degree rotation", "180 degree rotation"]
+DIRECTIONS = ["vertically", "horizontally", "both", "90 degree rotation", "180 degree rotation"]
 
 class MirrorTransform:
     @classmethod
@@ -11,7 +11,7 @@ class MirrorTransform:
                 "start_at": ("FLOAT", {"default": 0, "min": 0.0, "max": 1.0, "step": 0.01}),
                 "stop_at": ("FLOAT", {"default": 0, "min": 0.0, "max": 1.0, "step": 0.01}),
                 "mode": (["replace", "combine"],),
-                "direction": (DIRECTIONS, {"default": "none"}),
+                "direction": (DIRECTIONS, {"default": "horizontally"}),
             }
         }
 
@@ -24,16 +24,16 @@ class MirrorTransform:
                 start_at=0,
                 stop_at=0,
                 mode="replace",
-                direction="none",):
-        return [{
-            "params": {
-                "start_at": start_at,
-                "stop_at": stop_at,
-                "mode": mode,
-                "direction": direction,
-            },
-            "function": self.func
-        },]
+                direction="horizontally",):
+        return ([{
+                "params": {
+                    "start_at": start_at,
+                    "stop_at": stop_at,
+                    "mode": mode,
+                    "direction": direction,
+                },
+                "function": self.func
+            }],)
 
     def func(self, step, x0, total_steps, params) -> list:
         x = x0

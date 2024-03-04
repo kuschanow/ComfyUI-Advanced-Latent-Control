@@ -16,5 +16,5 @@ class TransformsCombine:
 
     CATEGORY = "sampling/transforms"
 
-    def combine(self, transform1=None, transform2=None) -> list:
-        return transform1 + transform2
+    def combine(self, transform1, transform2):
+        return (transform1 + transform2,)

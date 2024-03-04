@@ -23,15 +23,15 @@ class MultiplyTransform:
                 stop_at=0,
                 mode="combine",
                 multiplier=1):
-        return [{
-            "params": {
-                "start_at": start_at,
-                "stop_at": stop_at,
-                "mode": mode,
-                "multiplier": multiplier,
-            },
-            "function": self.func
-        },]
+        return ([{
+                "params": {
+                    "start_at": start_at,
+                    "stop_at": stop_at,
+                    "mode": mode,
+                    "multiplier": multiplier,
+                },
+                "function": self.func
+            }],)
 
     def func(self, step, x0, total_steps, params) -> list:
         x = x0

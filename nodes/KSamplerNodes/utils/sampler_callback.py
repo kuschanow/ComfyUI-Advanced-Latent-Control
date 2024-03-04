@@ -98,7 +98,7 @@ def prepare_callback(model, steps, transforms, x0_output_dict=None):
     def mirror(step, x0, x, total_steps):
         for transform in transforms:
             for i in range(x0.size()[0]):
-                x0[i] = transform["func"](step, x0[i], total_steps, transform["params"])
+                x0[i] = transform["function"](step, x0[i], total_steps, transform["params"])
 
     def callback(step, x0, x, total_steps):
         mirror(step, x0, x, total_steps)
