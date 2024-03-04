@@ -19,7 +19,7 @@ class KSamplerMirroringApart:
                 "denoise": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 1.0, "step": 0.01}),
             },
             "optional":{
-                "transform": ("TRANSFORM",),
+                "transform_optional": ("TRANSFORM",),
             }
         }
 
@@ -28,7 +28,11 @@ class KSamplerMirroringApart:
 
     CATEGORY = "sampling"
 
-    def sample(self, model, seed, steps, cfg, sampler_name, scheduler, positive, negative, latent_image, denoise=1.0, transform=None):
+    def sample(self, model, seed, steps, cfg, sampler_name, scheduler, positive, negative, latent_image, denoise=1.0, transform_optional=None):
+
+        if transform_optional is None:
+            transform_optional = []
+
         return common_ksampler(
             model,
             seed,
@@ -39,5 +43,5 @@ class KSamplerMirroringApart:
             positive,
             negative,
             latent_image,
-            transform=transform,
+            transform=transform_optional,
             denoise=denoise)

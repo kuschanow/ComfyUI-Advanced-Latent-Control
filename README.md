@@ -3,7 +3,7 @@
 **This custom node helps to transform latent in different ways.**
 
 ## Custom Nodes
-### LatentMirror
+### Latent mirror
 This node can flip latent and merge original and flipped version
 
 **Input:** 
@@ -20,7 +20,7 @@ This node can flip latent and merge original and flipped version
 ![sample](https://i.imgur.com/YMyYorQ.png)
 ![sample](https://i.imgur.com/W5BasCO.png)
 
-### LatentShift
+### Latent shift
 This node can shift latent along x and y axes
 
 **Input:** 
@@ -36,7 +36,7 @@ This node can shift latent along x and y axes
 **Usage:**  
 ![sample](https://i.imgur.com/1Dp5dSw.png)
 
-### KSampler (Latent Control)
+### KSampler with transforms (Latent Control)
 This node can multiply, mirror and shift latent during generation
 
 **Input:**  
@@ -68,3 +68,21 @@ exactly matches the base KSampler
 ![sample](https://i.imgur.com/pxWupAx.png)  
 ![sample](https://i.imgur.com/1YkERDu.png)  
 
+# KSampler (Latent Control)
+This node allows to combine a lot of transforms with different parameters
+
+**Input:**
+- base KSampler fields
+- transform_optional – field that can take output from one of those nodes: `Mirror transform`, `Shift transform`, `Multiply transform` or `Combine transforms`
+
+**Fields:**
+exactly matches the base KSampler
+
+**Output:**
+exactly matches the base KSampler
+
+**Usage:**  
+![sample](https://i.imgur.com/PlGnAtA.png)  
+![sample](https://i.imgur.com/CtrBRPn.png)  
+
+All transform nodes parameters exactly match the corresponding `KSampler with transforms (Latent Control)` parameters

@@ -6,9 +6,9 @@ class MultiplyTransform:
     def INPUT_TYPES(s):
         return {
             "required": {
-                "start_multiplier_at": ("FLOAT", {"default": 0, "min": 0.0, "max": 1.0, "step": 0.01}),
-                "stop_multiplier_at": ("FLOAT", {"default": 0, "min": 0.0, "max": 1.0, "step": 0.01}),
-                "multiplier_mode": (["replace", "combine"], {"default": "combine"}),
+                "start_at": ("FLOAT", {"default": 0, "min": 0.0, "max": 1.0, "step": 0.01}),
+                "stop_at": ("FLOAT", {"default": 0, "min": 0.0, "max": 1.0, "step": 0.01}),
+                "mode": (["replace", "combine"], {"default": "combine"}),
                 "multiplier": ("FLOAT", {"default": 1, "min": -10, "max": 10, "step": 0.01}),
             }
         }

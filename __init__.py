@@ -12,12 +12,12 @@ NODE_CLASS_MAPPINGS = {
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "LatentMirror": "LatentMirror",
-    "LatentShift": "LatentShift",
-    "KSamplerMirroring": "KSampler (Latent Control)",
-    "KSamplerMirroringApart": "KSampler with apart transforms (Latent Control)",
-    "MirrorTransform": "Mirror Transform",
-    "ShiftTransform": "Shift Transform",
-    "MultiplyTransform": "Multiply Transform",
-    "TransformsCombine": "Combine Transforms",
+    "LatentMirror": "Latent mirror",
+    "LatentShift": "Latent shift",
+    "KSamplerMirroring": "KSampler with transforms (Latent Control)",
+    "KSamplerMirroringApart": "KSampler (Latent Control)",
+    "MirrorTransform": "Mirror transform",
+    "ShiftTransform": "Shift transform",
+    "MultiplyTransform": "Multiply transform",
+    "TransformsCombine": "Combine transforms",
 }

@@ -67,12 +67,10 @@ class KSamplerMirroring:
                multiplier_mode="combine",
                multiplier=1):
 
-        transforms = TransformsCombine().combine(
-            TransformsCombine().combine(
-                MirrorTransform().process(start_mirror_at, stop_mirror_at, mirror_mode, mirror_direction),
-                ShiftTransform().process(start_shift_at, stop_shift_at, shift_mode, x_shift, y_shift)),
-            MultiplyTransform().process(start_multiplier_at, stop_multiplier_at, multiplier_mode, multiplier)
-        )
+        transforms = (
+            MirrorTransform().process(start_mirror_at, stop_mirror_at, mirror_mode, mirror_direction) +
+            ShiftTransform().process(start_shift_at, stop_shift_at, shift_mode, x_shift, y_shift) +
+            MultiplyTransform().process(start_multiplier_at, stop_multiplier_at, multiplier_mode, multiplier))[0]
 
         return common_ksampler(
             model,
