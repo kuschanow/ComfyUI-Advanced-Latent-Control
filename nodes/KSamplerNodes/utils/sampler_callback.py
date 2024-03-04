@@ -77,7 +77,7 @@ def get_previewer(device, latent_format):
                 previewer = Latent2RGBPreviewer(latent_format.latent_rgb_factors)
     return previewer
 
-def prepare_callback(model, steps, mirroring_params, x0_output_dict=None):
+def prepare_callback(model, steps, transforms, x0_output_dict=None):
     preview_format = "JPEG"
     if preview_format not in ["JPEG", "PNG"]:
         preview_format = "JPEG"
@@ -96,48 +96,9 @@ def prepare_callback(model, steps, mirroring_params, x0_output_dict=None):
         pbar.update_absolute(step + 1, total_steps, preview_bytes)
 
     def mirror(step, x0, x, total_steps):
-        for i in range(x0.size()[0]):
-            if total_steps * mirroring_params["start_multiplier_at"] <= step <= total_steps * mirroring_params["stop_multiplier_at"]:
-                if mirroring_params["multiplier_mode"] == "replace":
-                    x0[i] *= mirroring_params["multiplier"]
-                elif mirroring_params["multiplier_mode"] == "combine":
-                    x0[i] = (x0[i] * mirroring_params["multiplier"] + x0[i]) / 2
-
-            if total_steps * mirroring_params["start_mirror_at"] <= step <= total_steps * mirroring_params["stop_mirror_at"]:
-                if mirroring_params["mirror_mode"] == "replace":
-                    if mirroring_params["mirror_direction"] == "vertically":
-                        x0[i] = torch.flip(x0[i], [1])
-                    elif mirroring_params["mirror_direction"] == "horizontally":
-                        x0[i] = torch.flip(x0[i], [2])
-                    elif mirroring_params["mirror_direction"] == "both":
-                        x0[i] = torch.flip(x0[i], [1, 2])
-                    elif mirroring_params["mirror_direction"] == "90 degree rotation":
-                        x0[i] = torch.rot90(x0[i], dims=[1, 2])
-                    elif mirroring_params["mirror_direction"] == "180 degree rotation":
-                        x0[i] = torch.rot90(torch.rot90(x0[i], dims=[1, 2]), dims=[1, 2])
-                elif mirroring_params["mirror_mode"] == "combine":
-                    if mirroring_params["mirror_direction"] == "vertically":
-                        x0[i] = (torch.flip(x0[i], [1]) + x0[i]) / 2
-                    elif mirroring_params["mirror_direction"] == "horizontally":
-                        x0[i] = (torch.flip(x0[i], [2]) + x0[i]) / 2
-                    elif mirroring_params["mirror_direction"] == "both":
-                        x0[i] = (torch.flip(x0[i], [1, 2]) + x0[i]) / 2
-                    elif mirroring_params["mirror_direction"] == "90 degree rotation":
-                        x0[i] = (torch.rot90(x0[i], dims=[1, 2]) + x0[i]) / 2
-                    elif mirroring_params["mirror_direction"] == "180 degree rotation":
-                        x0[i] = (torch.rot90(torch.rot90(x0[i], dims=[1, 2]), dims=[1, 2]) + x0[i]) / 2
-
-            if total_steps * mirroring_params["start_shift_at"] <= step <= total_steps * mirroring_params["stop_shift_at"]:
-                if mirroring_params["shift_mode"] == "replace":
-                    if mirroring_params["x_shift"] != 0:
-                        x0[i] = torch.roll(x0[i], shifts=int(x0[i].size()[2] * mirroring_params["x_shift"]), dims=[2])
-                    if mirroring_params["y_shift"] != 0:
-                        x0[i] = torch.roll(x0[i], shifts=int(x0[i].size()[1] * mirroring_params["y_shift"]), dims=[1])
-                elif mirroring_params["shift_mode"] == "combine":
-                    if mirroring_params["x_shift"] != 0:
-                        x0[i] = (torch.roll(x0[i], shifts=int(x0[i].size()[2] * mirroring_params["x_shift"]), dims=[2]) + x0[i]) / 2
-                    if mirroring_params["y_shift"] != 0:
-                        x0[i] = (torch.roll(x0[i], shifts=int(x0[i].size()[1] * mirroring_params["y_shift"]), dims=[1]) + x0[i]) / 2
+        for transform in transforms:
+            for i in range(x0.size()[0]):
+                x0[i] = transform["func"](step, x0[i], total_steps, transform["params"])
 
     def callback(step, x0, x, total_steps):
         mirror(step, x0, x, total_steps)

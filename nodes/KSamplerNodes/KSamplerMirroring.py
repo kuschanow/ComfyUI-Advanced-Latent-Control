@@ -1,6 +1,7 @@
 import comfy.samplers
 import torch
 from .utils.sampler_callback import prepare_callback
+from .Transforms import MirrorTransform, ShiftTransform, MultiplyTransform
 
 
 MIRROR_DIRECTIONS = ["none", "vertically", "horizontally", "both", "90 degree rotation", "180 degree rotation"]
@@ -42,7 +43,37 @@ class KSamplerMirroring:
 
     CATEGORY = "sampling"
 
-    def sample(self, model, seed, steps, cfg, sampler_name, scheduler, positive, negative, latent_image, denoise=1.0, start_mirror_at=0, stop_mirror_at=0, mirror_mode="replace", mirror_direction="none", start_shift_at=0, stop_shift_at=0, shift_mode="replace", x_shift=0, y_shift=0, start_multiplier_at=0, stop_multiplier_at=0, multiplier_mode="combine", multiplier=1):
+    def sample(self,
+               model,
+               seed,
+               steps,
+               cfg,
+               sampler_name,
+               scheduler,
+               positive,
+               negative,
+               latent_image,
+               denoise=1.0,
+               start_mirror_at=0,
+               stop_mirror_at=0,
+               mirror_mode="replace",
+               mirror_direction="none",
+               start_shift_at=0,
+               stop_shift_at=0,
+               shift_mode="replace",
+               x_shift=0,
+               y_shift=0,
+               start_multiplier_at=0,
+               stop_multiplier_at=0,
+               multiplier_mode="combine",
+               multiplier=1):
+
+        transforms = (
+                MirrorTransform().process(start_mirror_at, stop_mirror_at, mirror_mode, mirror_direction) +
+                ShiftTransform().process(start_shift_at, stop_shift_at, shift_mode, x_shift, y_shift) +
+                MultiplyTransform().process(start_multiplier_at, stop_multiplier_at, multiplier_mode, multiplier)
+        )
+
         return common_ksampler(
             model,
             seed,
@@ -53,24 +84,10 @@ class KSamplerMirroring:
             positive,
             negative,
             latent_image,
-            {
-                "start_mirror_at": start_mirror_at,
-                "stop_mirror_at": stop_mirror_at,
-                "mirror_mode": mirror_mode,
-                "mirror_direction": mirror_direction,
-                "start_shift_at": start_shift_at,
-                "stop_shift_at": stop_shift_at,
-                "shift_mode": shift_mode,
-                "x_shift": x_shift,
-                "y_shift": y_shift,
-                "start_multiplier_at": start_multiplier_at,
-                "stop_multiplier_at": stop_multiplier_at,
-                "multiplier_mode": multiplier_mode,
-                "multiplier": multiplier,
-            },
+            transforms=transforms,
             denoise=denoise)
 
-def common_ksampler(model, seed, steps, cfg, sampler_name, scheduler, positive, negative, latent, mirroring_params, denoise=1.0, disable_noise=False, start_step=None, last_step=None, force_full_denoise=False):
+def common_ksampler(model, seed, steps, cfg, sampler_name, scheduler, positive, negative, latent, transforms, denoise=1.0, disable_noise=False, start_step=None, last_step=None, force_full_denoise=False):
     latent_image = latent["samples"]
     if disable_noise:
         noise = torch.zeros(latent_image.size(), dtype=latent_image.dtype, layout=latent_image.layout, device="cpu")
