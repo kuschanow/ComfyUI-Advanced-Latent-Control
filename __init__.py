@@ -12,6 +12,7 @@ NODE_CLASS_MAPPINGS = {
     "OneTimeMultiplyTransform": OneTimeMultiplyTransform,
     "OneTimeShiftTransform": OneTimeShiftTransform,
     "TransformsCombine": TransformsCombine,
+    "TransformOffset": TransformOffset,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -26,5 +27,6 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "OneTimeMultiplyTransform": "Shift transform (one time)",
     "OneTimeShiftTransform": "Multiply transform (one time)",
     "TransformsCombine": "Combine transforms",
+    "TransformOffset": "Transform offset",
 }
 

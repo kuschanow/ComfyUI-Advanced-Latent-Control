@@ -5,3 +5,4 @@ from .MultiplyTransform import MultiplyTransform
 from .OneTimeMultiplyTransform import OneTimeMultiplyTransform
 from .OneTimeShiftTransform import OneTimeShiftTransform
 from .OneTimeMirrorTransform import OneTimeMirrorTransform
+from .TransformOffset import TransformOffset

@@ -29,7 +29,7 @@ def shift_transform(x0, params) -> list:
     return x
 
 
-def mirror_transform(step, x0, total_steps, params) -> list:
+def mirror_transform(x0, params) -> list:
     x = x0
 
     if params["mode"] == "replace":
