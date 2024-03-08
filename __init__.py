@@ -1,4 +1,4 @@
-from .nodes import LatentMirror, LatentShift, KSamplerMirroring, KSamplerMirroringApart, MirrorTransform, ShiftTransform, MultiplyTransform, TransformsCombine
+from .nodes import *
 
 NODE_CLASS_MAPPINGS = {
     "LatentMirror": LatentMirror,
@@ -8,6 +8,9 @@ NODE_CLASS_MAPPINGS = {
     "MirrorTransform": MirrorTransform,
     "ShiftTransform": ShiftTransform,
     "MultiplyTransform": MultiplyTransform,
+    "OneTimeMirrorTransform": OneTimeMirrorTransform,
+    "OneTimeMultiplyTransform": OneTimeMultiplyTransform,
+    "OneTimeShiftTransform": OneTimeShiftTransform,
     "TransformsCombine": TransformsCombine,
 }
 
@@ -19,5 +22,9 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "MirrorTransform": "Mirror transform",
     "ShiftTransform": "Shift transform",
     "MultiplyTransform": "Multiply transform",
+    "OneTimeMirrorTransform": "Mirror transform (one time)",
+    "OneTimeMultiplyTransform": "Shift transform (one time)",
+    "OneTimeShiftTransform": "Multiply transform (one time)",
     "TransformsCombine": "Combine transforms",
 }
+

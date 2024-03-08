@@ -2,3 +2,6 @@ from .TransformsCombine import TransformsCombine
 from .MirrorTransform import MirrorTransform
 from .ShiftTransform import ShiftTransform
 from .MultiplyTransform import MultiplyTransform
+from .OneTimeMultiplyTransform import OneTimeMultiplyTransform
+from .OneTimeShiftTransform import OneTimeShiftTransform
+from .OneTimeMirrorTransform import OneTimeMirrorTransform

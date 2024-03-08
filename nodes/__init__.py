@@ -2,7 +2,10 @@ from .LatentMirror import LatentMirror
 from .LatentShift import LatentShift
 from .KSamplerNodes.KSamplerMirroring import KSamplerMirroring
 from .KSamplerNodes.KSamplerMirroringApart import KSamplerMirroringApart
-from .KSamplerNodes.Transforms.MirrorTransform import MirrorTransform
-from .KSamplerNodes.Transforms.MultiplyTransform import MultiplyTransform
-from .KSamplerNodes.Transforms.ShiftTransform import ShiftTransform
-from .KSamplerNodes.Transforms.TransformsCombine import TransformsCombine
+from .KSamplerNodes.Transforms import MirrorTransform
+from .KSamplerNodes.Transforms import MultiplyTransform
+from .KSamplerNodes.Transforms import ShiftTransform
+from .KSamplerNodes.Transforms import TransformsCombine
+from .KSamplerNodes.Transforms import OneTimeMirrorTransform
+from .KSamplerNodes.Transforms import OneTimeMultiplyTransform
+from .KSamplerNodes.Transforms import OneTimeShiftTransform
