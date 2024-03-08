@@ -1,4 +1,4 @@
-import torch
+from .utils import multiply_transform, get_offset_list
 
 
 class MultiplyTransform:
@@ -10,6 +10,9 @@ class MultiplyTransform:
                 "stop_at": ("FLOAT", {"default": 0, "min": 0.0, "max": 1.0, "step": 0.01}),
                 "mode": (["replace", "combine"], {"default": "combine"}),
                 "multiplier": ("FLOAT", {"default": 1, "min": -10, "max": 10, "step": 0.01}),
+            },
+            "optional": {
+                "offset_optional": ("OFFSET",),
             }
         }
 
@@ -19,27 +22,28 @@ class MultiplyTransform:
     CATEGORY = "sampling/transforms"
 
     def process(self,
+                offset_optional,
                 start_at=0,
                 stop_at=0,
                 mode="combine",
                 multiplier=1):
         return ([{
-                "params": {
-                    "start_at": start_at,
-                    "stop_at": stop_at,
-                    "mode": mode,
-                    "multiplier": multiplier,
-                },
-                "function": self.func
-            }],)
+            "params": {
+                "start_at": start_at,
+                "stop_at": stop_at,
+                "mode": mode,
+                "multiplier": multiplier,
+                "offset": offset_optional,
+            },
+            "function": self.func
+        }],)
 
-    def func(self, step, x0, total_steps, params) -> list:
+    def func(self, step, x0, total_steps, params):
         x = x0
 
-        if total_steps * params["start_at"] <= step <= total_steps * params["stop_at"]:
-            if params["mode"] == "replace":
-                x *= params["multiplier"]
-            elif params["mode"] == "combine":
-                x = (x * params["multiplier"] + x) / 2
+        offset_list = get_offset_list(params["offset"], total_steps)
+
+        if total_steps * params["start_at"] <= step + 1 <= total_steps * params["stop_at"] and offset_list[step]:
+            x = multiply_transform(x0, params)
 
         return x
