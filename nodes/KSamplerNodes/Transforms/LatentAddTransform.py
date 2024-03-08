@@ -1,18 +1,16 @@
-from .transform_functions import mirror_transform
+from .transform_functions import latent_add_transform
 
 
-DIRECTIONS = ["vertically", "horizontally", "both", "90 degree rotation", "180 degree rotation"]
-
-class MirrorTransform:
+class LatentAddTransform:
     @classmethod
     def INPUT_TYPES(s):
         return {
             "required": {
+                "latent": ("LATENT",),
                 "offset": ("OFFSET",),
                 "start_at": ("FLOAT", {"default": 0, "min": 0.0, "max": 1.0, "step": 0.01}),
                 "stop_at": ("FLOAT", {"default": 0, "min": 0.0, "max": 1.0, "step": 0.01}),
-                "mode": (["replace", "combine"],),
-                "direction": (DIRECTIONS, {"default": "horizontally"}),
+                "multiplier": ("FLOAT", {"default": 1, "min": -10, "max": 10, "step": 0.01}),
             }
         }
 
@@ -23,16 +21,16 @@ class MirrorTransform:
 
     def process(self,
                 offset,
+                latent,
                 start_at=0,
                 stop_at=0,
-                mode="replace",
-                direction="horizontally",):
+                multiplier=1):
         return ([{
             "params": {
+                "latent": latent["samples"][0],
                 "start_at": start_at,
                 "stop_at": stop_at,
-                "mode": mode,
-                "direction": direction,
+                "multiplier": multiplier,
                 "offset": offset,
                 "offset_status": offset["process_every"] - offset["offset"] - 1,
             },
@@ -46,4 +44,4 @@ class MirrorTransform:
                 params["offset_status"] = params["offset"]["process_every"] - 1
             else:
                 params["offset_status"] -= 1
-            return mirror_transform(x0, params)
+            return latent_add_transform(x0, params)

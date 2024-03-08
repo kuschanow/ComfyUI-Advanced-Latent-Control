@@ -32,6 +32,6 @@ class OneTimeMirrorTransform:
                 "function": self.func
             }],)
 
-    def func(self, step, x0, total_steps, params) -> list:
+    def func(self, step, x0, total_steps, params):
         if step == params["step"]:
             return mirror_transform(x0, params)

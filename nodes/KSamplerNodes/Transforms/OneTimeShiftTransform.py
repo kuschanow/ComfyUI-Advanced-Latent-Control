@@ -33,6 +33,6 @@ class OneTimeShiftTransform:
                 "function": self.func
             }],)
 
-    def func(self, step, x0, total_steps, params) -> list:
+    def func(self, step, x0, total_steps, params):
         if step == params["step"]:
             return shift_transform(x0, params)

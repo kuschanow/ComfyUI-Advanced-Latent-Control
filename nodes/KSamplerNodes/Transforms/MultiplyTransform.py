@@ -31,13 +31,17 @@ class MultiplyTransform:
                 "stop_at": stop_at,
                 "mode": mode,
                 "multiplier": multiplier,
+                "offset": offset,
+                "offset_status": offset["process_every"] - offset["offset"] - 1,
             },
-            "offset": offset,
-            "offset_status": offset["process_every"] - offset["offset"] - 1,
             "function": self.func
         }],)
 
-    def func(self, step, x0, total_steps, params) -> list:
+    def func(self, step, x0, total_steps, params):
         if (total_steps * params["start_at"] <= step <= total_steps * params["stop_at"] and
            (params["offset_status"] == 0 if params["offset"]["mode"] == "process_every" else params["offset_status"] != 0)):
+            if params["offset_status"] == 0:
+                params["offset_status"] = params["offset"]["process_every"] - 1
+            else:
+                params["offset_status"] -= 1
             return multiply_transform(x0, params)

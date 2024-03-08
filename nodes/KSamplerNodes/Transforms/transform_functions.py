@@ -1,7 +1,7 @@
 import torch
+import comfy
 
-
-def multiply_transform(x0, params) -> list:
+def multiply_transform(x0, params):
     x = x0
 
     if params["mode"] == "replace":
@@ -12,7 +12,7 @@ def multiply_transform(x0, params) -> list:
     return x
 
 
-def shift_transform(x0, params) -> list:
+def shift_transform(x0, params):
     x = x0
 
     if params["mode"] == "replace":
@@ -29,7 +29,7 @@ def shift_transform(x0, params) -> list:
     return x
 
 
-def mirror_transform(x0, params) -> list:
+def mirror_transform(x0, params):
     x = x0
 
     if params["mode"] == "replace":
@@ -54,5 +54,33 @@ def mirror_transform(x0, params) -> list:
             x = (torch.rot90(x, dims=[1, 2]) + x) / 2
         elif params["direction"] == "180 degree rotation":
             x = (torch.rot90(torch.rot90(x, dims=[1, 2]), dims=[1, 2]) + x) / 2
+
+    return x
+
+
+def latent_interpolate_transform(x0, params):
+    latent = params["latent"]
+
+    if x0.shape != latent.shape:
+        latent.permute(0, 3, 1, 2)
+        latent = comfy.utils.common_upscale(latent, x0.shape[3], x0.shape[2], 'bicubic')
+        latent.permute(0, 2, 3, 1)
+
+    x = x0 * params["factor"] + latent * (1 - params["factor"])
+    x *= params["multiplier"]
+
+    return x
+
+
+def latent_add_transform(x0, params):
+    latent = params["latent"]
+
+    if x0.shape != latent.shape:
+        latent.permute(0, 3, 1, 2)
+        latent = comfy.utils.common_upscale(latent, x0.shape[3], x0.shape[2], 'bicubic')
+        latent.permute(0, 2, 3, 1)
+
+    x = x0 + latent
+    x *= params["multiplier"]
 
     return x
