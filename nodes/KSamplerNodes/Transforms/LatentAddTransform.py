@@ -1,4 +1,4 @@
-from .transform_functions import latent_add_transform
+from .utils import latent_add_transform, get_offset_list
 
 
 class LatentAddTransform:
@@ -7,10 +7,12 @@ class LatentAddTransform:
         return {
             "required": {
                 "latent": ("LATENT",),
-                "offset": ("OFFSET",),
                 "start_at": ("FLOAT", {"default": 0, "min": 0.0, "max": 1.0, "step": 0.01}),
                 "stop_at": ("FLOAT", {"default": 0, "min": 0.0, "max": 1.0, "step": 0.01}),
                 "multiplier": ("FLOAT", {"default": 1, "min": -10, "max": 10, "step": 0.01}),
+            },
+            "optional":{
+                "offset_optional": ("OFFSET",),
             }
         }
 
@@ -20,7 +22,7 @@ class LatentAddTransform:
     CATEGORY = "sampling/transforms"
 
     def process(self,
-                offset,
+                offset_optional,
                 latent,
                 start_at=0,
                 stop_at=0,
@@ -31,17 +33,17 @@ class LatentAddTransform:
                 "start_at": start_at,
                 "stop_at": stop_at,
                 "multiplier": multiplier,
-                "offset": offset,
-                "offset_status": offset["process_every"] - offset["offset"] - 1,
+                "offset": offset_optional,
             },
             "function": self.func
         }],)
 
     def func(self, step, x0, total_steps, params):
-        if (total_steps * params["start_at"] <= step <= total_steps * params["stop_at"] and
-           (params["offset_status"] == 0 if params["offset"]["mode"] == "process_every" else params["offset_status"] != 0)):
-            if params["offset_status"] == 0:
-                params["offset_status"] = params["offset"]["process_every"] - 1
-            else:
-                params["offset_status"] -= 1
-            return latent_add_transform(x0, params)
+        x = x0
+
+        offset_list = get_offset_list(params["offset"], total_steps)
+
+        if total_steps * params["start_at"] <= step+1 <= total_steps * params["stop_at"] and offset_list[step]:
+            x = latent_add_transform(x0, params)
+
+        return x

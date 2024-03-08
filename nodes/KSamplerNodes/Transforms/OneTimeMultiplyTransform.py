@@ -1,4 +1,4 @@
-from .transform_functions import multiply_transform
+from .utils import multiply_transform
 
 
 class OneTimeMultiplyTransform:
@@ -31,5 +31,9 @@ class OneTimeMultiplyTransform:
             }],)
 
     def func(self, step, x0, total_steps, params):
-        if step == params["step"]:
-            return multiply_transform(x0, params)
+        x = x0
+
+        if step + 1 == params["step"]:
+            x = multiply_transform(x0, params)
+
+        return x

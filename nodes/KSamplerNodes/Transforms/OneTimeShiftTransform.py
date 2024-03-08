@@ -1,4 +1,4 @@
-from .transform_functions import shift_transform
+from .utils import shift_transform
 
 
 class OneTimeShiftTransform:
@@ -34,5 +34,9 @@ class OneTimeShiftTransform:
             }],)
 
     def func(self, step, x0, total_steps, params):
-        if step == params["step"]:
-            return shift_transform(x0, params)
+        x = x0
+
+        if step + 1 == params["step"]:
+            x = shift_transform(x0, params)
+
+        return x

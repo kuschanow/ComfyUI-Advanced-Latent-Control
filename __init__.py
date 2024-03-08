@@ -17,6 +17,7 @@ NODE_CLASS_MAPPINGS = {
     "OneTimeLatentAddTransform": OneTimeLatentAddTransform,
     "TransformsCombine": TransformsCombine,
     "TransformOffset": TransformOffset,
+    "OffsetCombine": OffsetCombine,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -36,5 +37,6 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "OneTimeLatentAddTransform": "Latent add transform (one time)",
     "TransformsCombine": "Combine transforms",
     "TransformOffset": "Transform offset",
+    "OffsetCombine": "Combine offsets",
 }
 

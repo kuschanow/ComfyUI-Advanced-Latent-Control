@@ -68,7 +68,7 @@ exactly matches the base KSampler
 ![sample](https://i.imgur.com/pxWupAx.png)  
 ![sample](https://i.imgur.com/1YkERDu.png)  
 
-# KSampler (Latent Control)
+### KSampler (Latent Control)
 This node allows to combine a lot of transforms with different parameters
 
 **Input:**
@@ -85,4 +85,36 @@ exactly matches the base KSampler
 ![sample](https://i.imgur.com/PlGnAtA.png)  
 ![sample](https://i.imgur.com/CtrBRPn.png)  
 
-All transform nodes parameters exactly match the corresponding `KSampler with transforms (Latent Control)` parameters
+Multiply, Mirror and Shift transform nodes parameters exactly match the corresponding `KSampler with transforms (Latent Control)` parameters
+
+There are two new transform nodes:
+- Latent add
+- Latent interpolate
+
+They work exactly the same as LatentAdd and LatentBlend nodes from standard node pack, but also, can multiply result by specified number.
+
+### Offset
+You can apply specific offset for transform nodes.
+
+**Fields:**
+- `process_every` – a number that indicates which steps will be processed
+- `offset` – a number that indicates offset for previous parameter. For example: if `process_every` is 4 and `offset` is 0, sampler apply transformation with this pattern: **0 0 0 1**. This pattern will repeat again and again. If `offset` is 2, pattern will be **0 1 0 0**, if -1 – **1 0 0 0**.
+- `mode` – can be `process_every` or `skip_every`. For example, with `skip_every` previous pattern (**0 0 0 1**) turn into this: **1 1 1 0**
+
+**Output:**
+- `offset`
+
+**Usage:**  
+![sample](https://i.imgur.com/ExZacqG.png)
+![sample](https://i.imgur.com/tR6KSmI.png)
+![sample](https://i.imgur.com/MGVLfve.png)
+
+You can combine different offsets to achieve interesting patterns. For example:  
+**0 0 0 1** and **0 0 1** give this pattern **0 0 1 1 0 1 0 1 1 0 0 1**
+
+### One time nodes
+
+Each transform node has own one-time version. They allow to make one transform action at specified step.
+
+**Usage:**  
+![sample](https://i.imgur.com/Q1Vyob0.png)

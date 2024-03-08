@@ -15,11 +15,11 @@ class TransformOffset:
     CATEGORY = "sampling/transforms"
 
     def process(self, process_every = 1, offset = 0, mode = "process_every"):
-        return (
+        return ([
             {
                 "process_every": process_every,
                 "offset": offset % process_every,
                 "mode": mode
             }
-        )
+        ],)
 

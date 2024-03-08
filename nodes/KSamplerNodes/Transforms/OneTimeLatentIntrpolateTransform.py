@@ -1,4 +1,4 @@
-from .transform_functions import latent_interpolate_transform
+from .utils import latent_interpolate_transform
 
 
 class OneTimeLatentInterpolateTransform:
@@ -34,5 +34,9 @@ class OneTimeLatentInterpolateTransform:
         }],)
 
     def func(self, step, x0, total_steps, params):
-        if step == params["step"]:
-            return latent_interpolate_transform(x0, params)
+        x = x0
+
+        if step + 1 == params["step"]:
+            x = latent_interpolate_transform(x0, params)
+
+        return x

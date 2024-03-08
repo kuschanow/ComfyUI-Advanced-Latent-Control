@@ -1,4 +1,4 @@
-from .transform_functions import mirror_transform
+from .utils import mirror_transform
 
 
 DIRECTIONS = ["vertically", "horizontally", "both", "90 degree rotation", "180 degree rotation"]
@@ -33,5 +33,9 @@ class OneTimeMirrorTransform:
             }],)
 
     def func(self, step, x0, total_steps, params):
-        if step == params["step"]:
-            return mirror_transform(x0, params)
+        x = x0
+
+        if step + 1 == params["step"]:
+            x = mirror_transform(x0, params)
+
+        return x

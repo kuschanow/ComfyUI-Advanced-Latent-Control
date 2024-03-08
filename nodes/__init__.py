@@ -14,3 +14,4 @@ from .KSamplerNodes.Transforms import OneTimeLatentInterpolateTransform
 from .KSamplerNodes.Transforms import OneTimeLatentAddTransform
 from .KSamplerNodes.Transforms import TransformsCombine
 from .KSamplerNodes.Transforms import TransformOffset
+from .KSamplerNodes.Transforms import OffsetCombine

@@ -1,4 +1,4 @@
-from .transform_functions import latent_add_transform
+from .utils import latent_add_transform
 
 
 class OneTimeLatentAddTransform:
@@ -31,5 +31,9 @@ class OneTimeLatentAddTransform:
         }],)
 
     def func(self, step, x0, total_steps, params):
-        if step == params["step"]:
-            return latent_add_transform(x0, params)
+        x = x0
+
+        if step+1 == params["step"]:
+            x = latent_add_transform(x0, params)
+
+        return x

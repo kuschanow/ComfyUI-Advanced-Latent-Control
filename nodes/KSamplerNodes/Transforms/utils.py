@@ -84,3 +84,30 @@ def latent_add_transform(x0, params):
     x *= params["multiplier"]
 
     return x
+
+
+def get_offset_list(offsets, total_steps):
+    if offsets is None:
+        return [True for _ in range(total_steps)]
+
+    def list_without_offset(offset):
+        return [
+            True if x % offset["process_every"] == 0 else False
+            for x in
+            range(total_steps)
+        ] if offset["mode"] == "process_every" else [
+                False if x % offset["process_every"] == 0 else True
+                for x in
+                range(total_steps)
+        ]
+    def list_with_offset(offset):
+        _list = list_without_offset(offset)
+        return _list[-offset["offset"]:] + _list[:-offset["offset"]]
+
+    lists = [
+        list_with_offset(offset)
+        for offset in
+        offsets
+    ]
+
+    return [any(values) for values in zip(*lists)]
