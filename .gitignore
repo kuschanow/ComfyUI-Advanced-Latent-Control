@@ -212,11 +212,3 @@ ENV/
 /site
 
 # End of https://www.gitignore.io/api/macos,linux,django,python,pycharm
-/TeleBot.session
-/TeleBot.session-journal
-
-
-*.session
-*.session-journal
-
-/static

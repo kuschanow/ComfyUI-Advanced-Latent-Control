@@ -1,12 +1,12 @@
 import comfy.samplers
-from .utils.common_ksampler import common_ksampler
-from .Transforms import MirrorTransform, ShiftTransform, MultiplyTransform, TransformsCombine
+from .TransformSampler import TransformSampler
+from .Transforms import MirrorTransform, ShiftTransform, MultiplyTransform
 
 
 MIRROR_DIRECTIONS = ["none", "vertically", "horizontally", "both", "90 degree rotation", "180 degree rotation"]
 MODE = ["replace", "combine"]
 
-class KSamplerMirroring:
+class TSamplerWithTransform:
     @classmethod
     def INPUT_TYPES(s):
         return {
@@ -72,7 +72,7 @@ class KSamplerMirroring:
             ShiftTransform().process(start_shift_at, stop_shift_at, shift_mode, x_shift, y_shift) +
             MultiplyTransform().process(start_multiplier_at, stop_multiplier_at, multiplier_mode, multiplier))[0]
 
-        return common_ksampler(
+        return TransformSampler().sample(
             model,
             seed,
             steps,
@@ -82,7 +82,7 @@ class KSamplerMirroring:
             positive,
             negative,
             latent_image,
-            transform=transforms,
+            transform_optional=transforms,
             denoise=denoise)
 
 
