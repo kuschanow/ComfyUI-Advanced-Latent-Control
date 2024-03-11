@@ -36,7 +36,7 @@ This node can shift latent along x and y axes
 **Usage:**  
 ![sample](https://i.imgur.com/1Dp5dSw.png)
 
-### KSampler with transforms (Latent Control)
+### TSampler with transforms (Latent Control)
 This node can multiply, mirror and shift latent during generation
 
 **Input:**  
@@ -68,7 +68,7 @@ exactly matches the base KSampler
 ![sample](https://i.imgur.com/pxWupAx.png)  
 ![sample](https://i.imgur.com/1YkERDu.png)  
 
-### KSampler (Latent Control)
+### TSampler (Latent Control)
 This node allows to combine a lot of transforms with different parameters
 
 **Input:**
@@ -118,3 +118,32 @@ Each transform node has own one-time version. They allow to make one transform a
 
 **Usage:**  
 ![sample](https://i.imgur.com/Q1Vyob0.png)
+
+### Latent normalize
+
+**Input**  
+exactly matches the `VAE Decode` node
+
+**Output**
+- latent
+
+When you multiply latent by negative or big positive (bigger than 2) number and paste this latent in sampler, you can see that the
+image will be generated very poorly. This is because stable diffusion cannot work with such set of numbers (meaning the numbers contained in latent).
+
+![sample](https://i.imgur.com/3FXk8n7.png)
+
+But you can prevent this behavior by sequential decode and encode latent using vae. Node `Latent normalize` make this process easier.
+
+![sample](https://i.imgur.com/hkFYYVh.png)
+
+This node also change some results even if output without this node looks good.
+
+![sample](https://i.imgur.com/kP0f6vh.png)
+![sample](https://i.imgur.com/YI8ZqLd.png)
+
+And it very slightly changes results from latent, which have not been modified.
+
+![sample](https://i.imgur.com/xTU08xm.png)
+![sample](https://i.imgur.com/yzgW7QT.png)
+
+

@@ -3,6 +3,7 @@ from .nodes import *
 NODE_CLASS_MAPPINGS = {
     "LatentMirror": LatentMirror,
     "LatentShift": LatentShift,
+    "LatentNormalize": LatentNormalize,
     "KSamplerWithTransform": TSamplerWithTransform,
     "TransformSampler": TransformSampler,
     "MirrorTransform": MirrorTransform,
@@ -23,6 +24,7 @@ NODE_CLASS_MAPPINGS = {
 NODE_DISPLAY_NAME_MAPPINGS = {
     "LatentMirror": "Latent mirror",
     "LatentShift": "Latent shift",
+    "LatentNormalize": "Latent normalize",
     "KSamplerWithTransform": "TSampler with transforms (Latent Control)",
     "TransformSampler": "TSampler (Latent Control)",
     "MirrorTransform": "Mirror transform",
