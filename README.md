@@ -1,10 +1,12 @@
 # ComfyUI-Advanced-Latent-Control
 
-**This custom node helps to transform latent in different ways.**
+**This custom nodes helps to transform latent in different ways.**
 
-## Custom Nodes
-### Latent mirror
-This node can flip latent and merge original and flipped version
+>You can access new features earlier by switching from the master branch to dev,
+but you need to remember that there may be some issues on the dev branch and some nodes' behavior may change after release.
+
+## Latent mirror
+This node can flip latent and merge original and flipped version.
 
 **Input:** 
 - `latent`
@@ -20,8 +22,8 @@ This node can flip latent and merge original and flipped version
 ![sample](https://i.imgur.com/YMyYorQ.png)
 ![sample](https://i.imgur.com/W5BasCO.png)
 
-### Latent shift
-This node can shift latent along x and y axes
+## Latent shift
+This node can shift latent along x and y-axis.
 
 **Input:** 
 - `latent`
@@ -36,8 +38,8 @@ This node can shift latent along x and y axes
 **Usage:**  
 ![sample](https://i.imgur.com/1Dp5dSw.png)
 
-### TSampler with transforms (Latent Control)
-This node can multiply, mirror and shift latent during generation
+## TSampler with transforms (Latent Control)
+This node can multiply, mirror and shift latent during generation.
 
 **Input:**  
 exactly matches the base KSampler
@@ -68,8 +70,8 @@ exactly matches the base KSampler
 ![sample](https://i.imgur.com/pxWupAx.png)  
 ![sample](https://i.imgur.com/1YkERDu.png)  
 
-### TSampler (Latent Control)
-This node allows to combine a lot of transforms with different parameters
+## TSampler (Latent Control)
+This node allows to combine a lot of transforms with different parameters.
 
 **Input:**
 - base KSampler fields
@@ -85,7 +87,7 @@ exactly matches the base KSampler
 ![sample](https://i.imgur.com/PlGnAtA.png)  
 ![sample](https://i.imgur.com/CtrBRPn.png)  
 
-Multiply, Mirror and Shift transform nodes parameters exactly match the corresponding `KSampler with transforms (Latent Control)` parameters
+Multiply, Mirror and Shift transform nodes parameters exactly match the corresponding `KSampler with transforms (Latent Control)` parameters.
 
 There are two new transform nodes:
 - Latent add
@@ -93,7 +95,7 @@ There are two new transform nodes:
 
 They work exactly the same as LatentAdd and LatentBlend nodes from standard node pack, but also, can multiply result by specified number.
 
-### Offset
+## Offset
 You can apply specific offset for transform nodes.
 
 **Fields:**
@@ -110,16 +112,18 @@ You can apply specific offset for transform nodes.
 ![sample](https://i.imgur.com/MGVLfve.png)
 
 You can combine different offsets to achieve interesting patterns. For example:  
-**0 0 0 1** and **0 0 1** give this pattern **0 0 1 1 0 1 0 1 1 0 0 1**
+**0 0 0 1** and **0 0 1** give this pattern: **0 0 1 1 0 1 0 1 1 0 0 1**.
 
-### One time nodes
+## One time nodes
 
 Each transform node has own one-time version. They allow to make one transform action at specified step.
 
 **Usage:**  
 ![sample](https://i.imgur.com/Q1Vyob0.png)
 
-### Latent normalize
+## Latent normalize
+
+Fixes some issues when sampling modified latent space.
 
 **Input**  
 exactly matches the `VAE Decode` node
