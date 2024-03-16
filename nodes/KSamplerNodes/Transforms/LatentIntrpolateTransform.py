@@ -1,4 +1,6 @@
 from .utils import latent_interpolate_transform, get_offset_list
+import comfy
+import torch
 
 
 class LatentInterpolateTransform:
@@ -23,15 +25,15 @@ class LatentInterpolateTransform:
     CATEGORY = "sampling/transforms"
 
     def process(self,
-                offset_optional,
                 latent,
                 start_at=0,
                 stop_at=0,
                 factor=0.5,
-                multiplier=1):
+                multiplier=1,
+                offset_optional=None):
         return ([{
             "params": {
-                "latent": latent["samples"][0],
+                "latent": latent["samples"][0].unsqueeze(0),
                 "start_at": start_at,
                 "stop_at": stop_at,
                 "factor": factor,

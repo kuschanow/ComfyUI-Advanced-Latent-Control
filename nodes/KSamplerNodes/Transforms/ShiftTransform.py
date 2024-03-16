@@ -23,12 +23,12 @@ class ShiftTransform:
     CATEGORY = "sampling/transforms"
 
     def process(self,
-                offset_optional,
                 start_at=0,
                 stop_at=0,
                 mode="replace",
                 x_shift=0,
-                y_shift=0):
+                y_shift=0,
+                offset_optional=None):
         return ([{
             "params": {
                 "start_at": start_at,
