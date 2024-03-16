@@ -1,4 +1,6 @@
 from .utils import latent_add_transform, get_offset_list
+import comfy
+import torch
 
 
 class LatentAddTransform:
@@ -29,7 +31,7 @@ class LatentAddTransform:
                 offset_optional=None):
         return ([{
             "params": {
-                "latent": latent["samples"][0],
+                "latent": latent["samples"][0].unsqueeze(0),
                 "start_at": start_at,
                 "stop_at": stop_at,
                 "multiplier": multiplier,

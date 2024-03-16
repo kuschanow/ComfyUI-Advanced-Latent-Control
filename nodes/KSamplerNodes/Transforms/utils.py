@@ -59,11 +59,11 @@ def mirror_transform(x0, params):
 
 
 def latent_interpolate_transform(x0, params):
-    latent = params["latent"]
+    latent = params["latent"].to(x0.device)
 
     if x0.shape != latent.shape:
         latent.permute(0, 3, 1, 2)
-        latent = comfy.utils.common_upscale(latent, x0.shape[3], x0.shape[2], 'bicubic')
+        latent = comfy.utils.common_upscale(latent, x0.shape[3], x0.shape[2], 'bicubic', crop='center')
         latent.permute(0, 2, 3, 1)
 
     x = x0 * params["factor"] + latent * (1 - params["factor"])
@@ -73,11 +73,11 @@ def latent_interpolate_transform(x0, params):
 
 
 def latent_add_transform(x0, params):
-    latent = params["latent"]
+    latent = params["latent"].to(x0.device)
 
     if x0.shape != latent.shape:
         latent.permute(0, 3, 1, 2)
-        latent = comfy.utils.common_upscale(latent, x0.shape[3], x0.shape[2], 'bicubic')
+        latent = comfy.utils.common_upscale(latent, x0.shape[3], x0.shape[2], 'bicubic',  crop='center')
         latent.permute(0, 2, 3, 1)
 
     x = x0 + latent
