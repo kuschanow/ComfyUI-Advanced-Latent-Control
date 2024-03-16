@@ -22,11 +22,11 @@ class MultiplyTransform:
     CATEGORY = "sampling/transforms"
 
     def process(self,
-                offset_optional,
                 start_at=0,
                 stop_at=0,
                 mode="combine",
-                multiplier=1):
+                multiplier=1,
+                offset_optional=None):
         return ([{
             "params": {
                 "start_at": start_at,

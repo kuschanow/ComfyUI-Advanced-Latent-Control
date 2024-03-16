@@ -23,12 +23,12 @@ class LatentInterpolateTransform:
     CATEGORY = "sampling/transforms"
 
     def process(self,
-                offset_optional,
                 latent,
                 start_at=0,
                 stop_at=0,
                 factor=0.5,
-                multiplier=1):
+                multiplier=1,
+                offset_optional=None):
         return ([{
             "params": {
                 "latent": latent["samples"][0],

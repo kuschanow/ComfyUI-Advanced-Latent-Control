@@ -24,11 +24,11 @@ class MirrorTransform:
     CATEGORY = "sampling/transforms"
 
     def process(self,
-                offset_optional,
                 start_at=0,
                 stop_at=0,
                 mode="replace",
-                direction="horizontally",):
+                direction="horizontally",
+                offset_optional=None):
         return ([{
             "params": {
                 "start_at": start_at,
