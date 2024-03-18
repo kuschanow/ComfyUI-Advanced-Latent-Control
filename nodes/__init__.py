@@ -1,6 +1,7 @@
 from .LatentMirror import LatentMirror
 from .LatentShift import LatentShift
 from .LatentNormalize import LatentNormalize
+from .UITestNode import UITestNode
 from .KSamplerNodes.TSamplerWithTransform import TSamplerWithTransform
 from .KSamplerNodes.TransformSampler import TransformSampler
 from .KSamplerNodes.Transforms import MirrorTransform
