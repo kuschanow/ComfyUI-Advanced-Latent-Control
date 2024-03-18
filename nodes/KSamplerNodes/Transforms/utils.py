@@ -66,7 +66,7 @@ def latent_interpolate_transform(x0, params):
         latent = comfy.utils.common_upscale(latent, x0.shape[3], x0.shape[2], 'bicubic', crop='center')
         latent.permute(0, 2, 3, 1)
 
-    x = x0 * params["factor"] + latent * (1 - params["factor"])
+    x = latent * params["factor"] + x0 * (1 - params["factor"])
     x *= params["multiplier"]
 
     return x
