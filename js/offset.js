@@ -1,5 +1,5 @@
 import { app } from "/scripts/app.js";
-import {computeCanvasSize, generatePattern, recursiveLinkUpstream} from "./utils.js";
+import {computeCanvasSize, generatePattern, recursiveLinkUpstream, renameNodeInputs, removeNodeInputs} from "./utils.js";
 
 function drawSquares(ctx, widgetX, widgetY, squareSize, pattern) {
 	pattern.forEach((value, index) => {
@@ -57,7 +57,7 @@ function addOffsetCanvas(node, app) {
 							if (connectedNode.type !== "OffsetCombine") {
 								const pattern = {
 									process_every: connectedNode.widgets[0].value,
-									offset: connectedNode.widgets[1].value,
+									offset: connectedNode.widgets[1].value + node.widgets[0].value,
 									mode: connectedNode.widgets[2].value
 								}
 								patterns.push(pattern)
@@ -174,6 +174,45 @@ app.registerExtension({
                 const r = onNodeCreated ? onNodeCreated.apply(this, arguments) : undefined;
 
                 addOffsetCanvas(this, app)
+
+				this.getExtraMenuOptions = function(_, options) {
+					options.unshift(
+						{
+							content: `add offset`,
+							callback: () => {
+								this.addInput("offset", "OFFSET")
+
+								renameNodeInputs(this, "offset")
+
+								this.setDirtyCanvas(true);
+							},
+						},
+						{
+							content: `remove offset`,
+							callback: () => {
+								removeNodeInputs(this, [this.inputs.length-1])
+								renameNodeInputs(this, "offset")
+							},
+						},
+						{
+							content: "remove all unconnected offsets",
+							callback: () => {
+								let indexesToRemove = []
+
+								for (let i = 0; i < this.inputs.length; i++) {
+									if (!this.inputs[i].link) {
+										indexesToRemove.push(i)
+									}
+								}
+
+								if (indexesToRemove.length) {
+									removeNodeInputs(this, indexesToRemove)
+								}
+								renameNodeInputs(this, "offset")
+							},
+						},
+					);
+				}
 
 				return r;
 			}

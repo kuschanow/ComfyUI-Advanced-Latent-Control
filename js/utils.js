@@ -110,3 +110,20 @@ export function recursiveLinkUpstream(node, type, depth, index=null) {
 
 	return connections
 }
+
+export function renameNodeInputs(node, name) {
+	for (let i=0; i < node.inputs.length; i++) {
+		node.inputs[i].name = `${name}${i + 1}`
+	}
+}
+
+export function removeNodeInputs(node, indexesToRemove) {
+	indexesToRemove.sort((a, b) => b - a);
+
+	for (let i of indexesToRemove) {
+		if (node.inputs.length <= 2) { console.log("too short"); continue } // if only 2 left
+		node.removeInput(i)
+	}
+
+	node.onResize(node.size)
+}
