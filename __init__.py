@@ -1,13 +1,7 @@
-import os
-import filecmp
-import shutil
-
-import __main__
+from .nodes import *
 
 
 WEB_DIRECTORY = "js"
-
-from .nodes import *
 
 NODE_CLASS_MAPPINGS = {
     "LatentMirror": LatentMirror,
