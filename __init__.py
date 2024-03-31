@@ -10,7 +10,6 @@ WEB_DIRECTORY = "js"
 from .nodes import *
 
 NODE_CLASS_MAPPINGS = {
-    "UITestNode": UITestNode,
     "LatentMirror": LatentMirror,
     "LatentShift": LatentShift,
     "LatentNormalize": LatentNormalize,
@@ -32,7 +31,6 @@ NODE_CLASS_MAPPINGS = {
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "UITestNode": "UITestNode",
     "LatentMirror": "Latent mirror",
     "LatentShift": "Latent shift",
     "LatentNormalize": "Latent normalize",
