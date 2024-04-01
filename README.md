@@ -38,37 +38,8 @@ This node can shift latent along x and y-axis.
 **Usage:**  
 ![sample](https://i.imgur.com/1Dp5dSw.png)
 
-## TSampler with transforms (Latent Control)
-This node can multiply, mirror and shift latent during generation.
-
-**Input:**  
-exactly matches the base KSampler
-
-**Fields:**
-- base KSampler fields
-- `start_mirror_at` – a number between 0 and 1 that indicates at what point the sampler will start mirroring
-- `stop_mirror_at` – a number between 0 and 1 that indicates at what point the sampler will stop mirroring
-- `mirror_mode` – can be `replace` or `combine`. `replace` will replace the latent with the transformed one, `combine` will add the original and the transformed latent and divide by 2
-- `mirror_direction` – can be `none`, `vertically`, `horizontally`, `both`, `90 degree rotation` or `180 degree rotation`
-- `start_shift_at` – a number between 0 and 1 that indicates at what point the sampler will start shifting
-- `stop_shift_at` – a number between 0 and 1 that indicates at what point the sampler will stop shifting
-- `shift_mode` – can be `replace` or `combine`. `replace` will replace the latent with the transformed one, `combine` will add the original and the transformed latent and divide by 2
-- `x_shift` – a number between -1 and 1 that indicates how much the latent should be shifted
-- `y_shift` – a number between -1 and 1 that indicates how much the latent should be shifted
-- `start_multiplier_at` – a number between 0 and 1 that indicates at what point the sampler will start multiplying
-- `stop_multiplier_at` – a number between 0 and 1 that indicates at what point the sampler will stop multiplying
-- `multiplier_mode` – can be `replace` or `combine`. `replace` will replace the latent with the transformed one, `combine` will add the original and the transformed latent
-- `multiplier` – multiply latent by specified number
-
-**Output:**
-exactly matches the base KSampler
-
-**Usage:**  
-**You also can use those params together**  
-![sample](https://i.imgur.com/RMJTnWF.png)  
-![sample](https://i.imgur.com/fQ7UWuS.png)  
-![sample](https://i.imgur.com/pxWupAx.png)  
-![sample](https://i.imgur.com/1YkERDu.png)  
+## ~~TSampler with transforms (Latent Control)~~ 
+Removed from version 2.0.0
 
 ## TSampler (Latent Control)
 This node allows to combine a lot of transforms with different parameters.
@@ -125,10 +96,10 @@ Each transform node has own one-time version. They allow to make one transform a
 
 Fixes some issues when sampling modified latent space.
 
-**Input**  
+**Input:**  
 exactly matches the `VAE Decode` node
 
-**Output**
+**Output:**
 - latent
 
 When you multiply latent by negative or big positive (bigger than 2) number and paste this latent in sampler, you can see that the
@@ -150,4 +121,17 @@ And it very slightly changes results from latent, which have not been modified.
 ![sample](https://i.imgur.com/xTU08xm.png)
 ![sample](https://i.imgur.com/yzgW7QT.png)
 
+## Transform hijack
+
+Allow you to use transforms with any samplers that you like.
+
+**Inputs:**
+- latent
+- transforms
+
+**Outputs:**
+- latent
+
+**Usage:**
+![sample](https://i.imgur.com/YwVhHYF.png)  
 
