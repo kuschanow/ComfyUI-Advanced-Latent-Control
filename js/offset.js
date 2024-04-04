@@ -1,153 +1,122 @@
 import { app } from "/scripts/app.js";
-import {computeCanvasSize, generatePattern, recursiveLinkUpstream, renameNodeInputs, removeNodeInputs} from "./utils.js";
+import {addCanvas, computeCanvasSize, generatePattern, recursiveLinkUpstream, renameNodeInputs, removeNodeInputs} from "./utils.js";
 
 function drawSquares(ctx, widgetX, widgetY, squareSize, pattern) {
-	pattern.forEach((value, index) => {
-		const x = widgetX + index * squareSize; // координата x для квадратика
+	const actualSquareSize = squareSize - Math.floor(squareSize / 16);
+	widgetY += Math.floor(squareSize / 16) / 2;
+	widgetX += Math.floor(squareSize / 16) / 2;
 
-		// Устанавливаем цвет заливки и обводки
+	pattern.forEach((value, index) => {
+		const x = widgetX + index * squareSize;
+
 		ctx.fillStyle = value === 1 ? "#222223" : "#00000000";
-		ctx.strokeStyle = "#222223"; // Цвет обводки для всех квадратиков
+		ctx.strokeStyle = "#222223";
 		ctx.lineWidth = Math.floor(squareSize / 16);
 
 		if (value === 1) {
-			// Если значение 1, закрашиваем квадрат
-			ctx.fillRect(x, widgetY, squareSize, squareSize);
+			ctx.fillRect(x, widgetY, actualSquareSize, actualSquareSize);
 		}
 
-		// Рисуем обводку для всех квадратиков
-		ctx.strokeRect(x, widgetY, squareSize, squareSize);
+		ctx.strokeRect(x, widgetY, actualSquareSize, actualSquareSize);
 
-		// Добавляем текст в квадратик
 		if (squareSize >= 24) {
-			ctx.font = `bold ${squareSize/3}px Arial`; // Размер шрифта адаптируем под размер квадратика
+			ctx.font = `bold ${squareSize/3}px Arial`;
 			ctx.textAlign = "center";
 			ctx.textBaseline = "middle";
 			ctx.text
-			ctx.fillStyle = value === 1 ? "#dbdbdc" : "#222223"; // Цвет текста, чтобы он контрастировал с фоном квадратика
-			ctx.fillText(value.toString(), x + squareSize/2, widgetY + squareSize/2); // Позиционируем текст по центру квадратика
+			ctx.fillStyle = value === 1 ? "#dbdbdc" : "#222223";
+			ctx.fillText(value.toString(), x + actualSquareSize/2, widgetY + actualSquareSize/2);
 		}
 	});
 }
 
-function addOffsetCanvas(node, app) {
-	const widget = {
-		type: "customCanvas",
-		name: "Offset-Canvas",
-		get value() {
-			return this.canvas.value;
-		},
-		set value(x) {
-			this.canvas.value = x;
-		},
-		draw: function (ctx, node, widgetWidth, widgetY) {
-			if (!node.canvasHeight) {
-				computeCanvasSize(node, node.size)
-			}
+const offsetWidget = {
+	type: "customCanvas",
+	name: "Offset-Canvas",
+	get value() {
+		return this.canvas.value;
+	},
+	set value(x) {
+		this.canvas.value = x;
+	},
+	draw: function (ctx, node, widgetWidth, widgetY) {
+		if (!node.canvasHeight) {
+			computeCanvasSize(node, node.size)
+		}
 
-			let patterns = []
+		let patterns = []
 
-			if (node.type === "OffsetCombine") {
-				const inputList = [...Array(node.inputs.length).keys()]
-				for (let i of inputList) {
-					const connectedNodes = recursiveLinkUpstream(node, node.inputs[i].type, 0, i)
-					if (connectedNodes.length !== 0) {
-						for (let [node_ID, depth] of connectedNodes) {
-							const connectedNode = node.graph._nodes_by_id[node_ID]
-							if (connectedNode.type !== "OffsetCombine") {
-								const pattern = {
-									process_every: connectedNode.widgets[0].value,
-									offset: connectedNode.widgets[1].value + node.widgets[0].value,
-									mode: connectedNode.widgets[2].value
-								}
-								patterns.push(pattern)
-							}
+		if (node.type === "OffsetCombine") {
+			const connectedNodes = recursiveLinkUpstream(node, node.inputs[0].type, node.type, 0)
+			if (connectedNodes.length !== 0) {
+				for (let [node_ID, depth] of connectedNodes) {
+					const connectedNode = node.graph._nodes_by_id[node_ID]
+					if (connectedNode.type !== "OffsetCombine") {
+						const pattern = {
+							process_every: connectedNode.widgets[0].value,
+							offset: connectedNode.widgets[1].value + node.widgets[0].value,
+							mode: connectedNode.widgets[2].value
 						}
+						patterns.push(pattern)
 					}
 				}
-			} else {
-				const pattern = {
-					process_every: node.widgets[0].value,
-					offset: node.widgets[1].value,
-					mode: node.widgets[2].value}
-				patterns.push(pattern)
 			}
-
-			const pattern = generatePattern(patterns)
-
-			const visible = true
-			const t = ctx.getTransform();
-			const margin = 10
-
-			const widgetHeight = node.canvasHeight
-			const width = pattern.length * 32
-			const height = 32
-
-			const scale = Math.min((widgetWidth-margin*2)/width, (widgetHeight-margin*2)/height)
-
-			Object.assign(this.canvas.style, {
-				left: `${t.e}px`,
-				top: `${t.f + (widgetY*t.d)}px`,
-				width: `${widgetWidth * t.a}px`,
-				height: `${widgetHeight * t.d}px`,
-				position: "absolute",
-				zIndex: 1,
-				fontSize: `${t.d * 10.0}px`,
-				pointerEvents: "none",
-			});
-
-			this.canvas.hidden = !visible;
-
-            let backgroundWidth = width * scale
-            let backgroundHeight = height * scale
-
-			let xOffset = margin
-			if (backgroundWidth < widgetWidth) {
-				xOffset += (widgetWidth-backgroundWidth)/2 - margin
-			}
-			let yOffset = margin
-			if (backgroundHeight < widgetHeight) {
-				yOffset += (widgetHeight-backgroundHeight)/2 - margin
-			}
-
-			let widgetX = xOffset
-			widgetY = widgetY + yOffset
-
-            // Вычисляем размер квадратика, основываясь на ширине канваса и количестве элементов в списке
-            const squareSize = backgroundWidth / pattern.length;
-
-            // Рисуем квадратики
-			drawSquares(ctx, widgetX, widgetY, squareSize, pattern)
-		},
-	};
-
-	widget.canvas = document.createElement("canvas");
-	widget.canvas.className = "latent-control-custom-canvas";
-
-	widget.parent = node;
-	document.body.appendChild(widget.canvas);
-
-	node.addCustomWidget(widget);
-
-	app.canvas.onDrawBackground = function () {
-		for (let n in app.graph._nodes) {
-			n = graph._nodes[n];
-			for (let w in n.widgets) {
-				let wid = n.widgets[w];
-				if (Object.hasOwn(wid, "canvas")) {
-					wid.canvas.style.left = -8000 + "px";
-					wid.canvas.style.position = "absolute";
-				}
-			}
+		} else {
+			const pattern = {
+				process_every: node.widgets[0].value,
+				offset: node.widgets[1].value,
+				mode: node.widgets[2].value}
+			patterns.push(pattern)
 		}
-	};
 
-	node.onResize = function (size) {
-		computeCanvasSize(node, size);
-	}
+		const pattern = generatePattern(patterns)
 
-	return { minWidth: 200, minHeight: 200, widget }
-}
+		const visible = true
+		const t = ctx.getTransform();
+		const margin = 10
+
+		const widgetHeight = node.canvasHeight
+		const width = pattern.length * 32
+		const height = 32
+
+		const scale = Math.min((widgetWidth-margin*2)/width, (widgetHeight-margin*2)/height)
+
+		Object.assign(this.canvas.style, {
+			left: `${t.e}px`,
+			top: `${t.f + (widgetY*t.d)}px`,
+			width: `${widgetWidth * t.a}px`,
+			height: `${widgetHeight * t.d}px`,
+			position: "absolute",
+			zIndex: 1,
+			fontSize: `${t.d * 10.0}px`,
+			pointerEvents: "none",
+		});
+
+		this.canvas.hidden = !visible;
+
+		let backgroundWidth = width * scale
+		let backgroundHeight = height * scale
+
+		let xOffset = margin
+		if (backgroundWidth < widgetWidth) {
+			xOffset += (widgetWidth-backgroundWidth)/2 - margin
+		}
+		let yOffset = margin
+		if (backgroundHeight < widgetHeight) {
+			yOffset += (widgetHeight-backgroundHeight)/2 - margin
+		}
+
+		let widgetX = xOffset
+		widgetY = widgetY + yOffset
+
+		const squareSize = backgroundWidth / pattern.length;
+
+		drawSquares(ctx, widgetX, widgetY, squareSize, pattern)
+
+		ctx.fillStyle = "#ffffff88"
+		ctx.fillRect(widgetX, widgetY, backgroundWidth, backgroundHeight);
+	},
+};
 
 app.registerExtension({
     name: "Comfy.LatentControl.TransformOffset",
@@ -157,7 +126,7 @@ app.registerExtension({
             nodeType.prototype.onNodeCreated = function () {
                 const r = onNodeCreated ? onNodeCreated.apply(this, arguments) : undefined;
 
-                addOffsetCanvas(this, app)
+                addCanvas(this, app, offsetWidget)
 
 				return r;
 			}
@@ -173,7 +142,7 @@ app.registerExtension({
             nodeType.prototype.onNodeCreated = function () {
                 const r = onNodeCreated ? onNodeCreated.apply(this, arguments) : undefined;
 
-                addOffsetCanvas(this, app)
+                addCanvas(this, app, offsetWidget)
 
 				this.getExtraMenuOptions = function(_, options) {
 					options.unshift(

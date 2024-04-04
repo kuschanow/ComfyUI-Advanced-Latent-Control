@@ -83,26 +83,24 @@ export function generatePattern(rules) {
     return pattern;
 }
 
-export function recursiveLinkUpstream(node, type, depth, index=null) {
+export function recursiveLinkUpstream(node, slot_type, node_type, depth) {
 	depth += 1
 	let connections = []
-	if (node.type === "OffsetCombine") {
-		const inputList = [...Array(node.inputs.length).keys()]
-		for (let i of inputList) {
-			const link = node.inputs[i].link
-			if (link) {
-				const nodeID = node.graph.links[link].origin_id
-				const slotID = node.graph.links[link].origin_slot
-				const connectedNode = node.graph._nodes_by_id[nodeID]
+	const inputList = [...Array(node.inputs.length).keys()]
+	for (let i of inputList) {
+		const link = node.inputs[i].link
+		if (link) {
+			const nodeID = node.graph.links[link].origin_id
+			const slotID = node.graph.links[link].origin_slot
+			const connectedNode = node.graph._nodes_by_id[nodeID]
 
-				if (connectedNode.outputs[slotID].type === type) {
+			if (connectedNode.outputs[slotID].type === slot_type) {
 
-					connections.push([connectedNode.id, depth])
+				connections.push([connectedNode.id, depth])
 
-					if (connectedNode.inputs) {
-						const index = (connectedNode.type === "OffsetCombine") ? 0 : null
-						connections = connections.concat(recursiveLinkUpstream(connectedNode, type, depth, index))
-					}
+				if (connectedNode.inputs) {
+					const index = (connectedNode.type === node_type) ? 0 : null
+					connections = connections.concat(recursiveLinkUpstream(connectedNode, slot_type, node_type, depth))
 				}
 			}
 		}
@@ -127,3 +125,32 @@ export function removeNodeInputs(node, indexesToRemove) {
 
 	node.onResize(node.size)
 }
+
+export function addCanvas(node, app, widget) {
+	widget.canvas = document.createElement("canvas");
+	widget.canvas.className = "latent-control-custom-canvas";
+
+	widget.parent = node;
+	document.body.appendChild(widget.canvas);
+
+	node.addCustomWidget(widget);
+
+	app.canvas.onDrawBackground = function () {
+		for (let n in app.graph._nodes) {
+			n = graph._nodes[n];
+			for (let w in n.widgets) {
+				let wid = n.widgets[w];
+				if (Object.hasOwn(wid, "canvas")) {
+					wid.canvas.style.left = -8000 + "px";
+					wid.canvas.style.position = "absolute";
+				}
+			}
+		}
+	};
+
+	node.onResize = function (size) {
+		computeCanvasSize(node, size);
+	}
+}
+
+
