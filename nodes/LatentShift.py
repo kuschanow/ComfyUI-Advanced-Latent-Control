@@ -1,4 +1,5 @@
 import torch
+from nodes import PreviewImage
 
 
 class LatentShift:
@@ -19,6 +20,9 @@ class LatentShift:
                     "max": 1,
                     "step": 0.01
                 }),
+            },
+            "optional": {
+                "vae_optional": ("VAE",)
             }
         }
 
@@ -27,7 +31,7 @@ class LatentShift:
 
     CATEGORY = "latent/advanced"
 
-    def shift(self, latent, x_shift, y_shift):
+    def shift(self, latent, x_shift, y_shift, vae_optional = None):
         l = latent.copy()
 
         if x_shift != 0:
@@ -35,4 +39,8 @@ class LatentShift:
         if y_shift != 0:
             l["samples"] = torch.roll(l["samples"], shifts=int(l["samples"].size()[2] * y_shift), dims=[2])
 
+        if vae_optional:
+            return {"result": (l,), "ui": PreviewImage().save_images(vae_optional.decode(l["samples"]))["ui"]}
+
         return (l,)
+
