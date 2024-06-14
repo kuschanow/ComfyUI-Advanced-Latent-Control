@@ -1,0 +1,14 @@
+[project]
+name = "comfyui-advanced-latent-control"
+description = "This custom node helps to transform latent in different ways."
+version = "1.0.0"
+license = "LICENSE"
+
+[project.urls]
+Repository = "https://github.com/RomanKuschanow/ComfyUI-Advanced-Latent-Control"
+#  Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = ""
+DisplayName = "ComfyUI-Advanced-Latent-Control"
+Icon = ""
