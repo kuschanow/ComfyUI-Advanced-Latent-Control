@@ -1,32 +1,20 @@
-from .TransformContext import TransformContext
+from .transform_apply import attach_transforms
 
 
 class TransformHijack:
     @classmethod
     def INPUT_TYPES(cls):
         return {
-            "required" : {
-                "latent": ("LATENT",),
-                "transforms": ("TRANSFORM",)
+            "required": {
+                "model": ("MODEL",),
+                "transforms": ("TRANSFORM",),
             },
         }
 
-    RETURN_TYPES = ("LATENT",)
+    RETURN_TYPES = ("MODEL",)
     FUNCTION = "func"
 
     CATEGORY = "sampling/transforms"
 
-    _context = None
-    _hijack_node_id = None
-
-    def func(self, latent, transforms):
-        latent["transforms"] = transforms
-
-        if TransformHijack._context is None:
-            TransformHijack._hijack_node_id = id
-            TransformHijack._context = TransformContext()
-        else:
-            return (latent,)
-
-        TransformHijack._context.hijack()
-        return (latent,)
+    def func(self, model, transforms):
+        return (attach_transforms(model, transforms),)

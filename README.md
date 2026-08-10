@@ -125,13 +125,22 @@ And it very slightly changes results from latent, which have not been modified.
 
 Allow you to use transforms with any samplers that you like.
 
+Instead of patching the latent, this node patches the **model**: it attaches the transforms
+to a cloned model via a sampler post-cfg hook. Connect the returned model to any sampler
+(`KSampler`, `KSamplerAdvanced`, custom sampler nodes, etc.) and the transforms will be applied
+during sampling.
+
 **Inputs:**
-- latent
+- model
 - transforms
 
 **Outputs:**
-- latent
+- model
 
 **Usage:**
 ![sample](https://i.imgur.com/YwVhHYF.png)  
+
+> **Breaking change in 3.0.0:** `Transform hijack` now takes and returns a `MODEL` instead of a
+> `LATENT`. This replaces the old global `common_ksampler` monkey-patch, which conflicted with the
+> stock `KSampler` and other custom nodes. Rewire this node to your model input/output after updating.
 

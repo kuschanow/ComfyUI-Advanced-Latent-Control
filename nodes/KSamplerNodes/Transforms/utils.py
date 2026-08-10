@@ -62,9 +62,7 @@ def latent_interpolate_transform(x0, params):
     latent = params["latent"].to(x0.device)
 
     if x0.shape != latent.shape:
-        latent.permute(0, 3, 1, 2)
         latent = comfy.utils.common_upscale(latent, x0.shape[3], x0.shape[2], 'bicubic', crop='center')
-        latent.permute(0, 2, 3, 1)
 
     x = latent * params["factor"] + x0 * (1 - params["factor"])
     x *= params["multiplier"]
@@ -76,9 +74,7 @@ def latent_add_transform(x0, params):
     latent = params["latent"].to(x0.device)
 
     if x0.shape != latent.shape:
-        latent.permute(0, 3, 1, 2)
-        latent = comfy.utils.common_upscale(latent, x0.shape[3], x0.shape[2], 'bicubic',  crop='center')
-        latent.permute(0, 2, 3, 1)
+        latent = comfy.utils.common_upscale(latent, x0.shape[3], x0.shape[2], 'bicubic', crop='center')
 
     x = x0 + latent
     x *= params["multiplier"]

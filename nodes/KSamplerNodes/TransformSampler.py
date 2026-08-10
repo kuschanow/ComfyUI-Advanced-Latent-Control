@@ -1,4 +1,4 @@
-from .TransformContext import TransformContext
+from .transform_apply import attach_transforms
 from nodes import KSampler, KSamplerAdvanced
 
 
@@ -16,17 +16,11 @@ class Transforms:
 
     FUNCTION = "func"
 
-    def __init__(self):
-        self.original_function_name = self.clazz.FUNCTION
-
     def func(self, **kwargs):
-        ctx = TransformContext()
-        ctx.hijack()
-        latent = kwargs["latent_image"]
-        latent["transforms"] = kwargs.pop("transform_optional")
-        kwargs["latent_image"] = latent
-        out = getattr(self, self.clazz.FUNCTION)(**kwargs)
-        return out
+        transforms = kwargs.pop("transform_optional", None)
+        if transforms:
+            kwargs["model"] = attach_transforms(kwargs["model"], transforms)
+        return getattr(self, self.clazz.FUNCTION)(**kwargs)
 
 
 def variations_factory(original_class: type, name=None) -> type:
