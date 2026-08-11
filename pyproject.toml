@@ -1,7 +1,7 @@
 [project]
 name = "comfyui-advanced-latent-control"
 description = "This custom node helps to transform latent in different ways."
-version = "3.0.1"
+version = "3.1.0"
 license = "LICENSE"
 
 [project.urls]

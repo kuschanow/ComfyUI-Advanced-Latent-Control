@@ -1,52 +1,3 @@
-export function computeCanvasSize(node, size) {
-	if (node.widgets[0].last_y == null) return;
-
-	const MIN_SIZE = 64;
-
-	const inputs = node.inputs === undefined ? 0 : node.inputs.length
-	const outputs = node.outputs === undefined ? 0 : node.outputs.length
-
-	let y = LiteGraph.NODE_WIDGET_HEIGHT * Math.max(inputs, outputs) + 5;
-	let freeSpace = size[1] - y;
-
-	// Compute the height of all non customtext widgets
-	let widgetHeight = 0;
-	for (let i = 0; i < node.widgets.length; i++) {
-		const w = node.widgets[i];
-		if (w.type !== "customCanvas") {
-			if (w.computeSize) {
-				widgetHeight += w.computeSize()[1] + 4;
-			} else {
-				widgetHeight += LiteGraph.NODE_WIDGET_HEIGHT + 5;
-			}
-		}
-	}
-
-	// See how large the canvas can be
-	freeSpace -= widgetHeight;
-
-	// There isnt enough space for all the widgets, increase the size of the node
-	if (freeSpace < MIN_SIZE) {
-		freeSpace = MIN_SIZE;
-		node.size[1] = y + widgetHeight + freeSpace;
-		node.graph.setDirtyCanvas(true);
-	}
-
-	// Position each of the widgets
-	for (const w of node.widgets) {
-		w.y = y;
-		if (w.type === "customCanvas") {
-			y += freeSpace;
-		} else if (w.computeSize) {
-			y += w.computeSize()[1] + 4;
-		} else {
-			y += LiteGraph.NODE_WIDGET_HEIGHT + 4;
-		}
-	}
-
-	node.canvasHeight = freeSpace;
-}
-
 function gcd(a, b) {
     // Функция для вычисления наибольшего общего делителя (НОД)
     while (b !== 0) {
@@ -123,34 +74,90 @@ export function removeNodeInputs(node, indexesToRemove) {
 		node.removeInput(i)
 	}
 
-	node.onResize(node.size)
+	node.setSize(node.computeSize())
+	node.graph?.setDirtyCanvas(true, true)
 }
 
-export function addCanvas(node, app, widget) {
-	widget.canvas = document.createElement("canvas");
-	widget.canvas.className = "latent-control-custom-canvas";
+const MARGIN_X = 15;         // side padding — matches the node's standard widgets
+const MARGIN_Y = 10;         // top/bottom padding around the grid (node-local px)
+const MIN_SQUARE = 24;       // smallest square that still shows the row on tiny/long patterns
+const MAX_SQUARE = 72;       // largest square, so a short pattern doesn't blow up
+const MIN_NODE_WIDTH = 220;  // enough width for the squares to read
 
-	widget.parent = node;
-	document.body.appendChild(widget.canvas);
+// Square side that fits the given (full node) width and column count. Squares
+// shrink to fit a long pattern (down to 1px) and are capped so a short one stays
+// reasonable. Guarantees squareSize * cols <= width - 2*MARGIN_X, i.e. no overflow.
+function fitSquareSize(width, cols) {
+	const availWidth = width - MARGIN_X * 2;
+	return Math.max(1, Math.min(availWidth / Math.max(cols, 1), MAX_SQUARE));
+}
+
+/**
+ * Adds a self-contained canvas widget that draws a pattern preview directly onto
+ * the LiteGraph node context. Works with the current ComfyUI frontend (Nodes v2):
+ * it paints in node-local coordinates, so it scales and positions correctly with
+ * zoom and DPI — no DOM overlay and no manual ctx.getTransform() math.
+ *
+ * The preview auto-sizes to the space available inside the node: computeSize()
+ * reports exactly the height the grid needs for the current width and pattern
+ * length, so the node reserves the right amount of room, the squares grow/shrink
+ * as the node gets wider/narrower or the pattern longer/shorter, and the drawing
+ * always stays inside the node body.
+ *
+ * @param node        the LiteGraph node
+ * @param name        widget name
+ * @param getPattern  (node) => number[]  the 0/1 pattern to render
+ * @param drawSquares (ctx, startX, startY, squareSize, pattern) => void
+ */
+export function addCustomCanvasWidget(node, name, getPattern, drawSquares) {
+	const widget = {
+		type: "customCanvas",
+		name,
+		value: undefined,
+		options: { serialize: false },
+		computeSize() {
+			// Use the real node width, not the passed value: LiteGraph feeds a
+			// widened width to selected nodes, which would inflate the reserve.
+			const nodeWidth = node.size[0];
+			const cols = getPattern(node).length || 1;
+			const rowHeight = Math.max(fitSquareSize(nodeWidth, cols), MIN_SQUARE);
+			return [nodeWidth, rowHeight + MARGIN_Y * 2];
+		},
+		draw(ctx, node, width, widgetY) {
+			const pattern = getPattern(node);
+			if (!pattern || !pattern.length) return;
+
+			// Use node.size[0] rather than the `width` argument: on a selected node
+			// LiteGraph passes an enlarged width, which would push the grid right and
+			// peg the square size at its cap. node.size[0] is stable in both states.
+			const nodeWidth = node.size[0];
+			const cols = pattern.length;
+			const squareSize = fitSquareSize(nodeWidth, cols);
+
+			// Same band height computeSize reserved -> the grid stays inside the node.
+			const bandHeight = Math.max(squareSize, MIN_SQUARE) + MARGIN_Y * 2;
+			const gridWidth = squareSize * cols;
+
+			const startX = (nodeWidth - gridWidth) / 2;
+			const startY = widgetY + (bandHeight - squareSize) / 2;
+
+			// Light backing drawn first so empty cells stay readable on dark nodes.
+			ctx.fillStyle = "#ffffffcc";
+			ctx.fillRect(startX, startY, gridWidth, squareSize);
+
+			drawSquares(ctx, startX, startY, squareSize, pattern);
+		},
+	};
 
 	node.addCustomWidget(widget);
 
-	app.canvas.onDrawBackground = function () {
-		for (let n in app.graph._nodes) {
-			n = graph._nodes[n];
-			for (let w in n.widgets) {
-				let wid = n.widgets[w];
-				if (Object.hasOwn(wid, "canvas")) {
-					wid.canvas.style.left = -8000 + "px";
-					wid.canvas.style.position = "absolute";
-				}
-			}
-		}
-	};
+	// Widen a touch and reserve the preview height on creation. On workflow load
+	// LiteGraph applies the saved size after onNodeCreated, so this does not fight
+	// persisted sizes.
+	node.size[0] = Math.max(node.size[0], MIN_NODE_WIDTH);
+	node.setSize(node.computeSize());
 
-	node.onResize = function (size) {
-		computeCanvasSize(node, size);
-	}
+	return widget;
 }
 
 

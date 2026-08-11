@@ -19,8 +19,8 @@ This node can flip latent and merge original and flipped version.
 - `latent`
 
 **Usage:**  
-![sample](https://i.imgur.com/YMyYorQ.png)
-![sample](https://i.imgur.com/W5BasCO.png)
+![sample](assets/latent-mirror-usage-1.png)
+![sample](assets/latent-mirror-usage-2.png)
 
 ## Latent shift
 This node can shift latent along x and y-axis.
@@ -36,7 +36,7 @@ This node can shift latent along x and y-axis.
 - `latent`
 
 **Usage:**  
-![sample](https://i.imgur.com/1Dp5dSw.png)
+![sample](assets/latent-shift-usage.png)
 
 ## ~~TSampler with transforms (Latent Control)~~ 
 Removed from version 2.0.0
@@ -55,8 +55,8 @@ exactly matches the base KSampler
 exactly matches the base KSampler
 
 **Usage:**  
-![sample](https://i.imgur.com/PlGnAtA.png)  
-![sample](https://i.imgur.com/CtrBRPn.png)  
+![sample](assets/tsampler-usage-1.png)  
+![sample](assets/tsampler-usage-2.png)  
 
 Multiply, Mirror and Shift transform nodes parameters exactly match the corresponding `KSampler with transforms (Latent Control)` parameters.
 
@@ -78,9 +78,9 @@ You can apply specific offset for transform nodes.
 - `offset`
 
 **Usage:**  
-![sample](https://i.imgur.com/ExZacqG.png)
-![sample](https://i.imgur.com/tR6KSmI.png)
-![sample](https://i.imgur.com/MGVLfve.png)
+![sample](assets/offset-usage-1.png)
+![sample](assets/offset-usage-2.png)
+![sample](assets/offset-usage-3.png)
 
 You can combine different offsets to achieve interesting patterns. For example:  
 **0 0 0 1** and **0 0 1** give this pattern: **0 0 1 1 0 1 0 1 1 0 0 1**.
@@ -90,7 +90,7 @@ You can combine different offsets to achieve interesting patterns. For example:
 Each transform node has own one-time version. They allow to make one transform action at specified step.
 
 **Usage:**  
-![sample](https://i.imgur.com/Q1Vyob0.png)
+![sample](assets/one-time-nodes-usage.png)
 
 ## Latent normalize
 
@@ -105,21 +105,21 @@ exactly matches the `VAE Decode` node
 When you multiply latent by negative or big positive (bigger than 2) number and paste this latent in sampler, you can see that the
 image will be generated very poorly. This is because stable diffusion cannot work with such set of numbers (meaning the numbers contained in latent).
 
-![sample](https://i.imgur.com/3FXk8n7.png)
+![sample](assets/latent-normalize-poor-result.png)
 
 But you can prevent this behavior by sequential decode and encode latent using vae. Node `Latent normalize` make this process easier.
 
-![sample](https://i.imgur.com/hkFYYVh.png)
+![sample](assets/latent-normalize-fix.png)
 
 This node also change some results even if output without this node looks good.
 
-![sample](https://i.imgur.com/kP0f6vh.png)
-![sample](https://i.imgur.com/YI8ZqLd.png)
+![sample](assets/latent-normalize-comparison-1.png)
+![sample](assets/latent-normalize-comparison-2.png)
 
 And it very slightly changes results from latent, which have not been modified.
 
-![sample](https://i.imgur.com/xTU08xm.png)
-![sample](https://i.imgur.com/yzgW7QT.png)
+![sample](assets/latent-normalize-unmodified-1.png)
+![sample](assets/latent-normalize-unmodified-2.png)
 
 ## Transform hijack
 
@@ -138,7 +138,7 @@ during sampling.
 - model
 
 **Usage:**
-![sample](https://i.imgur.com/YwVhHYF.png)  
+![sample](assets/transform-hijack-usage.png)  
 
 > **Breaking change in 3.0.0:** `Transform hijack` now takes and returns a `MODEL` instead of a
 > `LATENT`. This replaces the old global `common_ksampler` monkey-patch, which conflicted with the
